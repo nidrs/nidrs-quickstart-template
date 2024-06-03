@@ -1,2 +1,3 @@
-# nidrs-quickstart-template
-a nidrs template.
+# TEMPLATE_NAME
+
+a nidrs project.
