@@ -22,25 +22,39 @@ fn main() {
     let app = app.default_prefix("/api/{version}");
     let app = app.default_version("v1");
 
-    let mut app = app.listen(3000);
+    let app = app.default_router_hook(|router_wrap| {
+        if router_wrap.match_router_path("/**") {
+            println!(
+                "router_wrap {:?}",
+                (
+                    router_wrap.meta.get_data::<nidrs::metadata::ServiceName>(),
+                    router_wrap
+                        .meta
+                        .get_data::<nidrs::metadata::RouterFullPath>(),
+                    router_wrap.meta.get_data::<datasets::role::Role>()
+                )
+            );
+            router_wrap.router.layer(
+                nidrs::externs::tower::ServiceBuilder::new()
+                    .layer(HandleErrorLayer::new(|error: BoxError| async move {
+                        if error.is::<nidrs::externs::tower::timeout::error::Elapsed>() {
+                            Ok(StatusCode::REQUEST_TIMEOUT)
+                        } else {
+                            Err((
+                                StatusCode::INTERNAL_SERVER_ERROR,
+                                format!("Unhandled internal error: {error}"),
+                            ))
+                        }
+                    }))
+                    .layer(TimeoutLayer::new(Duration::from_secs(5)))
+                    .layer(middleware::from_fn(auth)),
+            )
+        } else {
+            router_wrap.router
+        }
+    });
 
-    app.router = app.router.layer(
-        nidrs::externs::tower::ServiceBuilder::new()
-            .layer(HandleErrorLayer::new(|error: BoxError| async move {
-                if error.is::<nidrs::externs::tower::timeout::error::Elapsed>() {
-                    Ok(StatusCode::REQUEST_TIMEOUT)
-                } else {
-                    Err((
-                        StatusCode::INTERNAL_SERVER_ERROR,
-                        format!("Unhandled internal error: {error}"),
-                    ))
-                }
-            }))
-            .layer(TimeoutLayer::new(Duration::from_secs(5)))
-            .layer(middleware::from_fn(auth)),
-    );
-
-    app.block();
+    app.listen(3000).block();
 }
 
 #[derive(Clone, Debug)]

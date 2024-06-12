@@ -15,3 +15,5 @@ nidrs-macro = { workspace = true }
 nidrs-extern = { workspace = true }
 
 shared = { workspace = true }
+macros = { workspace = true }
+datasets = { workspace = true }

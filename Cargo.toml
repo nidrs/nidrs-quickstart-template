@@ -9,8 +9,10 @@ repository = "https://github.com/nidrs/nidrs.git"
 license = "MIT"
 
 [workspace.dependencies]
-nidrs = { version = "0.0.9", features = ["tower", "serde"] }
-nidrs-macro = { version = "0.0.9" }
-nidrs-extern = { version = "0.0.9" }
+nidrs = { version = "0.0.10", features = ["tower", "serde"] }
+nidrs-macro = { version = "0.0.10" }
+nidrs-extern = { version = "0.0.10" }
 
 shared = { path = "libs/shared" }
+macros = { path = "libs/macros" }
+datasets = { path = "libs/datasets" }

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use macros::user;
 use nidrs::externs::axum::{extract::Query, response::AppendHeaders, Json};
 use nidrs::macros::{controller, get, post};
 use nidrs::{Inject, Meta};
@@ -14,6 +15,7 @@ pub struct AppController {
 }
 
 impl AppController {
+    #[user]
     #[get("/hello")]
     pub async fn get_hello_world(
         &self,
@@ -21,7 +23,7 @@ impl AppController {
         Query(q): Query<HashMap<String, String>>,
     ) -> AppResult<(AppendHeaders<[(String, String); 2]>, Status)> {
         println!("Query {:?}", q);
-        println!("Meta {:?}", meta.get::<&str>("role"));
+        println!("Meta {:?}", meta.get_data::<datasets::role::Role>());
 
         Ok((
             AppendHeaders([
