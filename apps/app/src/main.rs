@@ -27,10 +27,10 @@ fn main() {
             println!(
                 "router_wrap {:?}",
                 (
-                    router_wrap.meta.get_data::<nidrs::metadata::ServiceName>(),
+                    router_wrap.meta.get_data::<nidrs::datasets::ServiceName>(),
                     router_wrap
                         .meta
-                        .get_data::<nidrs::metadata::RouterFullPath>(),
+                        .get_data::<nidrs::datasets::RouterFullPath>(),
                     router_wrap.meta.get_data::<datasets::role::Role>()
                 )
             );
