@@ -1,4 +1,3 @@
-use nidrs::default_uses;
 use nidrs::macros::module;
 
 pub mod controller;
